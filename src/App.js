@@ -1,95 +1,20 @@
 import React from 'react';
 import './App.css';
-
-const players = [
-  {name: 'LDK', score: 30, id:1},
-  {name: 'HONG', score: 40, id:2},
-  {name: 'KIM', score: 50, id:3},
-  {name: 'PARK', score: 60, id:4},
-];
-
-const Header = (props) =>{
-  console.log(props);
-  const {title, totalPlayers} = props;
-  /*객체 해체 할당*/
-  return(
-    <header className="header">
-      <h1 className="h1">{props.title}</h1>
-      <span className="stats">Players : {props.totalPlayers}</span>
-    </header>
-  )
-}
-
-const Player = (props) => {
-  return (
-    <div className="player">
-			<span className="player-name">
-				<button className="remove-player" onClick={() => props.removePlayer(props.id)}>x</button>
-        {props.name}
-			</span>
-      <Counter score={props.score}/>
-    </div>
-  )
-}
-
-
-class Counter extends React.Component{
-  //시간에 따라 변하는 데이터는 state라는 모델로 정의하였음
-  //state를 변경하는 방법은 setState() 밖에 없다
-  //setState() 는 merge(overwriteing)됨
-  //setState() 는 비동기로 처리된다
-  //이밴트 우측에는 함수 선언문이 와야 한다
-
-  state = {
-    score : 0
-  }
-
-  incrementScore(){
-    this.setState(
-      {score: this.state.score + 1}
-    );
-    console.log(this.state.score);
-  }
-
-  decrementScore(){
-    if (this.state.score > 0) {
-      this.setState(
-        {score: this.state.score - 1}
-      );
-    }
-    console.log(this.state.score);
-  }
-
-  //arrow function안에 쓰이는 this 는
-  changeScore = (delta) => {
-    this.setState(prevState => ({score: this.state.score + delta}));
-    console.log('changeScore;;;' ,this.state.score);
-  }
-
-  render() {
-    return(
-      <div className="counter">
-        <button className="counter-action decrement"
-                onClick={ () => this.changeScore(-1)}
-        > - </button>
-        <span className="counter-score">{this.state.score}</span>
-        <button className="counter-action increment"
-                onClick={ () => this.changeScore(1)}
-        > + </button>
-      </div>
-    );
-  }
-}
+import {Header} from "./component/Header";
+import {Player} from "./component/Player";
+import {AddPlayerForm} from "./component/AddPlayerForm";
 
 class App extends React.Component {
+  // Listing UP: 카운터 컴포넌트가 갖고 있는 로컬 state를 최상단 부모로 올리기
+  // 로직을 구현하기 위해서 Lifting up이 필요
   state = {
     players: [
-      {name: 'LDK', id: 1},
-      {name: 'HONG', id: 2},
-      {name: 'KIM', id: 3},
-      {name: 'PARK', id: 4},
+      {name: 'LDK', score: 30, id: 1},
+      {name: 'HONG', score: 40, id: 2},
+      {name: 'KIM', score: 50, id: 3},
+      {name: 'PARK', score: 60, id: 4},
     ]
-  };
+  }
 
   handleRemovePlayer = (id) => {
     this.setState(prevState => {
@@ -98,23 +23,39 @@ class App extends React.Component {
       }
     })
   }
-
   render() {
     return (
       <div className="scoreboard">
-        <Header title="My scoreboard" totalPlayers={this.state.players.length} />
+        <Header title="My scoreboard" players={this.state.players} />
 
         {/*Players List*/}
         { this.state.players.map((player) =>
           <Player name={player.name}
                   key={player.id}
+                  score={player.score}
                   removePlayer={this.handleRemovePlayer}
                   id={player.id}
+                  changeScore={this.handelChangeScore}
           />) }
+          <AddPlayerForm></AddPlayerForm>
       </div>
     );
   }
 
+  handelChangeScore = (id, delta) => {
+    console.log(id, delta);
+    this.setState(prevState => {
+      prevState.players.forEach(player =>{
+          if (player.id === id){
+            player.score += delta
+          }
+        }
+      )
+      return{
+         players:[...prevState.players]
+      }
+    })
+  }
 }
 
 //index.js 와 app.js 로 분리 되었기때문에 export 가 되어야만 한다.
