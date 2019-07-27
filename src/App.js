@@ -16,13 +16,8 @@ class App extends React.Component {
     ]
   }
 
-  handleRemovePlayer = (id) => {
-    this.setState(prevState => {
-      return {
-        players: prevState.players.filter(player => player.id !== id)
-      }
-    })
-  }
+  maxId = 4;
+
   render() {
     return (
       <div className="scoreboard">
@@ -37,9 +32,17 @@ class App extends React.Component {
                   id={player.id}
                   changeScore={this.handelChangeScore}
           />) }
-          <AddPlayerForm></AddPlayerForm>
+          <AddPlayerForm addPlayer = {this.handleAddPlayer}/>
       </div>
     );
+  }
+
+  handleRemovePlayer = (id) => {
+    this.setState(prevState => {
+      return {
+        players: prevState.players.filter(player => player.id !== id)
+      }
+    })
   }
 
   handelChangeScore = (id, delta) => {
@@ -54,6 +57,16 @@ class App extends React.Component {
       return{
          players:[...prevState.players]
       }
+    })
+  }
+
+  handleAddPlayer = (name) => {
+    console.log(name);
+    const player = {name: name, score: 0, id: ++this.maxId};
+
+    this.setState(prevState => {
+      prevState.players.push(player);
+      return {players: prevState.players};
     })
   }
 }
