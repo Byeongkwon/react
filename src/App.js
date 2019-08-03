@@ -1,8 +1,8 @@
 import React from 'react';
 import './App.css';
-import {Header} from "./component/Header";
-import {Player} from "./component/Player";
-import {AddPlayerForm} from "./component/AddPlayerForm";
+import {Header} from "./components/Header";
+import {Player} from "./components/Player";
+import {AddPlayerForm} from "./components/AddPlayerForm";
 
 class App extends React.Component {
   // Listing UP: 카운터 컴포넌트가 갖고 있는 로컬 state를 최상단 부모로 올리기
@@ -16,60 +16,58 @@ class App extends React.Component {
     ]
   }
 
-  maxId = 4;
+  maxId = 4;  // 편의상 추가
 
   render() {
     return (
       <div className="scoreboard">
-        <Header title="My scoreboard" players={this.state.players} />
+        <Header players={this.state.players} />
 
-        {/*Players List*/}
-        { this.state.players.map((player) =>
-          <Player name={player.name}
-                  key={player.id}
-                  score={player.score}
-                  removePlayer={this.handleRemovePlayer}
-                  id={player.id}
-                  changeScore={this.handelChangeScore}
-          />) }
-          <AddPlayerForm addPlayer = {this.handleAddPlayer}/>
+        {
+          this.state.players.map((player) =>
+            <Player name={player.name} score={player.score}
+                    id={player.id} key={player.id}
+                    removePlayer={this.handleRemovePlayer}
+                    changeScore={this.handleChangeScore} />)
+        }
+        <AddPlayerForm addPlayer={this.handleAddPlayer} />
       </div>
-    );
+    )
   }
 
   handleRemovePlayer = (id) => {
-    this.setState(prevState => {
-      return {
+    console.log(id);
+    // 자식을 삭제하는 로직
+    this.setState(prevState => ({
         players: prevState.players.filter(player => player.id !== id)
-      }
-    })
+      })
+    )
   }
 
-  handelChangeScore = (id, delta) => {
-    console.log(id, delta);
+  handleChangeScore = (id, delta) => {
+    console.log('handleChangeScore: ', id, delta);
     this.setState(prevState => {
-      prevState.players.forEach(player =>{
-          if (player.id === id){
-            player.score += delta
-          }
+      prevState.players.forEach(player => {
+        if (player.id === id) {
+          player.score += delta;
         }
-      )
-      return{
-         players:[...prevState.players]
+      })
+      return {
+        players: [...prevState.players]
       }
     })
   }
 
   handleAddPlayer = (name) => {
+    // name 을 가진 player 객체를 this.state.players 배열에 추가
     console.log(name);
-    const player = {name: name, score: 0, id: ++this.maxId};
 
     this.setState(prevState => {
+      const player = {name, score: 0, id: ++this.maxId}; // short hand property
       prevState.players.push(player);
-      return {players: prevState.players};
+      return {players: prevState.players}
     })
   }
 }
 
-//index.js 와 app.js 로 분리 되었기때문에 export 가 되어야만 한다.
 export default App;

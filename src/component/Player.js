@@ -1,32 +1,29 @@
 import React from 'react';
 import {Counter} from "./Counter";
 
-// export const Player = ({name, score, removePlayer, id, changeScore}) => {
-//
-// 	return (
-// 		<div className="player">
-// 			<span className="player-name">
-// 				<button className="remove-player" onClick={() => removePlayer(id)}>x</button>
-// 				{name}
-// 			</span>
-// 			<Counter id={id} score={score} changeScore={changeScore} />
-// 		</div>
-// 	);
-// }
-
-export class Player extends React.PureComponent {
+export class Player extends React.Component {
 	render() {
 		const {name, score, removePlayer, id, changeScore} = this.props;
-		console.log(this.props.name, ' rendered');
 
-		return (
+		console.log(name, 'rendered');
+
+		return	(
 			<div className="player">
-				<span className="player-name">
-					<button className="remove-player" onClick={() => removePlayer(id)}>x</button>
-					{name}
-				</span>
+			<span className="player-name">
+				<button className="remove-player" onClick={() => removePlayer(id)}>x</button>
+				{name}
+			</span>
 				<Counter id={id} score={score} changeScore={changeScore} />
 			</div>
 		);
+	}
+
+	componentWillReceiveProps(nextProps, nextContext) {
+		// console.log('componentWillReceiveProps: ', nextProps);
+	}
+
+	shouldComponentUpdate(nextProps, nextState, nextContext) {
+		// console.log('shouldComponentUpdate: ', nextProps);
+		return this.props.score !== nextProps.score ? true : false;
 	}
 }
