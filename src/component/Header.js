@@ -1,5 +1,5 @@
 import React from 'react';
-import {Statistics} from "./Statistics";
+import Statistics from "./Statistics";
 import {Stopwatch} from "./Stopwatch";
 import PropTypes from 'prop-types';
 
